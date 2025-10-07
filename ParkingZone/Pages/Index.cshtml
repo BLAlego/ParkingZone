@@ -1,0 +1,323 @@
+﻿@page
+@model ParkingZone.Pages.IndexModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="title">ParkingZone</h1>
+        @if (User?.Identity?.IsAuthenticated == true)
+        {
+            <p class="subtitle">
+                Hola <strong>@Model.UserName</strong> — Rol: <span class="chip">@Model.UserRole</span>
+            </p>
+        }
+        else
+        {
+            <p class="subtitle">
+                No has iniciado sesión. <a class="btn btn-primary btn-sm" asp-page="/Account/Login">Login</a>
+            </p>
+        }
+    </div>
+</section>
+
+@if (User?.Identity?.IsAuthenticated == true)
+{
+    <section class="grid">
+        @* ===== CLIENTE ===== *@
+        @if (User.IsInRole("client"))
+        {
+            <article class="card accent">
+                <header class="card-h">
+                    <h2>Reservar ahora</h2>
+                    <span class="tag ok">Cliente</span>
+                </header>
+                <p class="muted">Reserva un espacio por 30 minutos. Sin fechas ni horarios: es inmediato.</p>
+                <div class="card-a">
+                    <a class="btn btn-primary" asp-page="/Client/Reservation">Ir a Reservar</a>
+                    <a class="btn btn-outline" asp-page="/Client/MyReservations/Index">Mis reservas</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <header class="card-h">
+                    <h3>Mis vehículos</h3>
+                </header>
+                <p class="muted">Gestiona placas y tipos de vehículo.</p>
+                <div class="card-a">
+                    <a class="btn btn-outline" asp-page="/Client/Vehicle/Index">Administrar</a>
+                </div>
+            </article>
+        }
+
+        @* ===== TRABAJADOR ===== *@
+        @if (User.IsInRole("Trabajador"))
+        {
+            <article class="card accent">
+                <header class="card-h">
+                    <h2>Operación</h2>
+                    <span class="tag warn">Trabajador</span>
+                </header>
+                <p class="muted">Flujo diario: entradas, salidas y ocupación en tiempo real.</p>
+                <div class="quick">
+                    <a class="qbtn" asp-page="/Worker/Checkin/Index">Entradas</a>
+                    <a class="qbtn" asp-page="/Worker/Checkout/Index">Salidas</a>
+                    <a class="qbtn" asp-page="/Worker/Spaces/Index">Ocupación</a>
+                </div>
+            </article>
+
+            <article class="card kpi">
+                <header class="card-h">
+                    <h3>Resumen rápido</h3>
+                </header>
+                <div class="kpis">
+                    <div class="kpi">
+                        <span class="kpi-n">@Model.KpiActiveReservations</span>
+                        <span class="kpi-t">Reservas activas</span>
+                    </div>
+                    <div class="kpi">
+                        <span class="kpi-n">@Model.KpiAvailableSpaces</span>
+                        <span class="kpi-t">Espacios libres</span>
+                    </div>
+                </div>
+            </article>
+        }
+
+        @* ===== ADMIN ===== *@
+        @if (User.IsInRole("admin"))
+        {
+            <article class="card accent">
+                <header class="card-h">
+                    <h2>Panel Admin</h2>
+                    <span class="tag info">Admin</span>
+                </header>
+                <p class="muted">Gestiona usuarios, espacios y parqueos.</p>
+                <div class="quick">
+                    <a class="qbtn" asp-page="/Admin/User/Index">Usuarios</a>
+                    <a class="qbtn" asp-page="/Admin/Space/Index">Espacios</a>
+                    <a class="qbtn" asp-page="/Admin/Parking/Index">Parqueos</a>
+                    <a class="qbtn" asp-page="/Admin/Logs/Index">Logs</a>
+                </div>
+            </article>
+
+            <article class="card kpi">
+                <header class="card-h">
+                    <h3>Métricas</h3>
+                </header>
+                <div class="kpis">
+                    <div class="kpi">
+                        <span class="kpi-n">@Model.KpiUsers</span>
+                        <span class="kpi-t">Usuarios</span>
+                    </div>
+                    <div class="kpi">
+                        <span class="kpi-n">@Model.KpiSpaces</span>
+                        <span class="kpi-t">Espacios</span>
+                    </div>
+                    <div class="kpi">
+                        <span class="kpi-n">@Model.KpiActiveReservations</span>
+                        <span class="kpi-t">Reservas activas</span>
+                    </div>
+                </div>
+            </article>
+        }
+    </section>
+}
+
+<style>
+    :root {
+        --bg: #0f172a;
+        --panel: #0b1222;
+        --panel2: #0e1a31;
+        --border: #1f2a44;
+        --muted: #93a4bf;
+        --txt: #e7eefc;
+        --ok: #10b981;
+        --warn: #f59e0b;
+        --info: #60a5fa;
+        --primary: #3b82f6;
+        --r: 14px;
+    }
+
+    body {
+        background: linear-gradient(180deg,#0a1020,#0f1730 45%,#0b1222);
+        color: var(--txt)
+    }
+
+    .hero {
+        padding-block: 28px
+    }
+
+    .hero-content {
+        max-width: 1100px;
+        margin: auto;
+        padding-inline: 12px
+    }
+
+    .title {
+        font-size: 2.1rem;
+        margin: 0 0 .25rem 0
+    }
+
+    .subtitle {
+        color: var(--muted);
+        margin: 0
+    }
+
+    .chip {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 3px 10px;
+        background: rgba(59,130,246,.12);
+        color: #b3d0ff
+    }
+
+    .grid {
+        max-width: 1100px;
+        margin: 18px auto;
+        padding-inline: 12px;
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fill,minmax(280px,1fr))
+    }
+
+    .card {
+        background: linear-gradient(180deg,var(--panel),var(--panel2));
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 18px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.35);
+        display: grid;
+        gap: 10px;
+        transition: transform .15s, box-shadow .15s, border-color .15s;
+    }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0,0,0,.38)
+        }
+
+    .card-h {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px
+    }
+
+    .card-a {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap
+    }
+
+    .btn {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: var(--txt);
+        background: #122042;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block
+    }
+
+        .btn:hover {
+            background: #162a58;
+            border-color: #3352a6
+        }
+
+    .btn-outline {
+        background: #0b152a
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        border-color: transparent
+    }
+
+        .btn-primary:hover {
+            background: #2563eb
+        }
+
+    .muted {
+        color: var(--muted)
+    }
+
+    .tag {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-weight: 600
+    }
+
+        .tag.ok {
+            background: rgba(16,185,129,.12);
+            color: #b6ffe0
+        }
+
+        .tag.warn {
+            background: rgba(245,158,11,.12);
+            color: #ffe1b3
+        }
+
+        .tag.info {
+            background: rgba(96,165,250,.12);
+            color: #cfe0ff
+        }
+
+    .quick {
+        display: grid;
+        grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
+        gap: 8px
+    }
+
+    .qbtn {
+        background: #0b152a;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: var(--txt);
+        text-align: center;
+        text-decoration: none
+    }
+
+        .qbtn:hover {
+            background: #122042;
+            border-color: #3352a6
+        }
+
+    .kpi {
+        background: #0b152a;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center
+    }
+
+    .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
+        gap: 10px
+    }
+
+    .kpi-n {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #dfe7ff
+    }
+
+    .kpi-t {
+        color: var(--muted);
+        font-size: .95rem
+    }
+
+    .card.accent {
+        outline: 2px solid rgba(96,165,250,.22)
+    }
+
+    .card.kpi {
+        outline: 2px solid rgba(59,130,246,.14)
+    }
+</style>

@@ -1,0 +1,54 @@
+﻿@page
+@model ParkingZone.Pages.Admin.Parking.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Parking[0].ExitTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Parking[0].Profit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Parking[0].Space)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Parking[0].Vehicle)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Parking) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExitTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Profit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Space.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vehicle.Plate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

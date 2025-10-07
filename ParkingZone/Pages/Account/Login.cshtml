@@ -1,0 +1,178 @@
+﻿@page
+@model ParkingZone.Pages.Account.LoginModel
+@{
+    Layout = "_Layout"; // o tu layout dark (ej: "_Layout.Client" / "_Layout.Admin"), como prefieras
+    ViewData["Title"] = "Login";
+}
+
+<section class="login-shell">
+    <div class="login-card">
+        <header class="login-head">
+            <h1>Acceder a ParkingZone</h1>
+            <p class="muted">Ingresa tus credenciales para continuar.</p>
+        </header>
+
+        <form method="post" novalidate class="login-form">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="val text-danger"></div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" asp-for="Email" type="email" autocomplete="username" placeholder="tu@mail.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <input id="password" asp-for="Password" type="password" autocomplete="current-password" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn-primary w-100">Entrar</button>
+        </form>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert-err" role="alert">@Model.ErrorMessage</div>
+        }
+
+        <footer class="login-foot">
+            <span class="muted small">¿No tienes cuenta?</span>
+            <a asp-page="/Account/Register" class="link">Crear cuenta</a>
+        </footer>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    :root {
+        --bg: #0f172a;
+        --panel: #0b1222;
+        --panel2: #0e1a31;
+        --border: #1f2a44;
+        --muted: #93a4bf;
+        --txt: #e7eefc;
+        --primary: #3b82f6;
+        --r: 14px;
+        --danger: #ef4444;
+    }
+
+    body {
+        background: linear-gradient(180deg,#0a1020,#0f1730 45%,#0b1222);
+        color: var(--txt)
+    }
+
+    .login-shell {
+        min-height: calc(100dvh - 180px);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+    }
+
+    .login-card {
+        width: min(460px, 100%);
+        background: linear-gradient(180deg,var(--panel),var(--panel2));
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 22px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.35);
+        display: grid;
+        gap: 16px;
+    }
+
+    .login-head h1 {
+        margin: 0 0 6px 0;
+        font-size: 1.6rem
+    }
+
+    .muted {
+        color: var(--muted)
+    }
+
+    .small {
+        font-size: .95rem
+    }
+
+    .login-form {
+        display: grid;
+        gap: 12px
+    }
+
+    .field {
+        display: grid;
+        gap: 6px
+    }
+
+        .field input {
+            background: #0b152a;
+            border: 1px solid var(--border);
+            color: var(--txt);
+            border-radius: 10px;
+            padding: 10px 12px;
+            outline: 0;
+        }
+
+            .field input:focus {
+                border-color: #3759a6;
+                box-shadow: 0 0 0 3px rgba(59,130,246,.18)
+            }
+
+    .val {
+        margin-bottom: 4px
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: background .2s, transform .05s;
+    }
+
+        .btn-primary:hover {
+            background: #2563eb
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px)
+        }
+
+    .w-100 {
+        width: 100%
+    }
+
+    .alert-err {
+        background: rgba(239,68,68,.15);
+        border: 1px solid rgba(239,68,68,.35);
+        color: #ffd4d4;
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .login-foot {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        align-items: center;
+        margin-top: 4px;
+    }
+
+    .link {
+        color: #b6c7ff;
+        text-decoration: none
+    }
+
+        .link:hover {
+            color: #fff;
+            text-decoration: underline
+        }
+
+    .text-danger {
+        color: #ff9b9b
+    }
+</style>

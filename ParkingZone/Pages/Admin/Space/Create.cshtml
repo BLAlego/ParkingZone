@@ -1,0 +1,65 @@
+﻿@page
+@model ParkingZone.Pages.Admin.Space.CreateModel
+@{
+    ViewData["Title"] = "Create Space";
+}
+
+<h1>Create</h1>
+<h4>Space</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-5">
+        <form method="post">
+            <!-- Muestra TODOS los errores (modelo + campos) -->
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <label asp-for="Space.Code" class="control-label"></label>
+                <input asp-for="Space.Code" class="form-control" />
+                <span asp-validation-for="Space.Code" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Space.Type" class="control-label"></label>
+                <!-- Enum a dropdown -->
+                <select asp-for="Space.Type"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<ParkingZone.Models.VehicleType>()">
+                </select>
+                <span asp-validation-for="Space.Type" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Space.Available" />
+                    @Html.DisplayNameFor(m => m.Space.Available)
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Space.Level" class="control-label"></label>
+                <input asp-for="Space.Level" type="number" class="form-control" />
+                <span asp-validation-for="Space.Level" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Space.HourlyRate" class="control-label"></label>
+                <input asp-for="Space.HourlyRate" type="number" step="0.01" class="form-control" />
+                <span asp-validation-for="Space.HourlyRate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-page="Index" class="btn btn-secondary ms-2">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

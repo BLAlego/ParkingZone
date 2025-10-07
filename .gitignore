@@ -1,0 +1,96 @@
+## ============================
+## .gitignore para ASP.NET Core Razor Pages
+## ============================
+
+# Archivos de usuario
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de compilación
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+*.log
+
+# Configuración de VS
+.vs/
+.vscode/
+*.psess
+*.vsp
+*.vspx
+*.pidb
+*.svclog
+*.scc
+
+# Publicaciones
+publish/
+wwwroot/lib/
+wwwroot/node_modules/
+out/
+dist/
+artifacts/
+*.Publish.xml
+
+# Archivos generados por herramientas
+Generated_Code/
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+ServiceFabricBackup/
+
+# Configuración de usuario (local)
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.Development.json
+secrets.json
+
+# Dependencias Node/NPM (si usas Tailwind, Webpack o similares)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Configuración de Rider/JetBrains
+.idea/
+*.DotSettings.user
+
+# Archivos temporales
+*.tmp
+*.temp
+*.bak
+*.swp
+*.DS_Store
+Thumbs.db
+
+# Archivos de publicación o deployment
+*.publishsettings
+*.pubxml
+*.pubxml.user
+Properties/PublishProfiles/*.pubxml
+Properties/PublishProfiles/*.pubxml.user
+
+# Certificados locales
+*.pfx
+*.p12
+*.cer
+*.crt
+*.key
+
+# Docker
+docker-compose.override.yml
+.docker/
+*.env
+
+# Logs y dumps
+*.log
+*.dmp
+
+# Archivos de respaldo y cache
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*_ReSharper.Caches/

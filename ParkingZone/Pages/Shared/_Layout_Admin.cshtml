@@ -1,0 +1,196 @@
+﻿@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewData["Title"] ?? "Admin") - ParkingZone</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ParkingZone.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #0b1222;
+            --panel2: #0e1a31;
+            --border: #1f2a44;
+            --muted: #93a4bf;
+            --txt: #e7eefc;
+            --ok: #10b981;
+            --warn: #f59e0b;
+            --err: #ef4444;
+            --primary: #3b82f6;
+            --r: 14px;
+        }
+
+        html, body {
+            height: 100%
+        }
+
+        body {
+            background: linear-gradient(180deg,#0a1020,#0f1730 45%,#0b1222);
+            color: var(--txt);
+        }
+
+        .shell {
+            padding-block: 18px
+        }
+
+        .navwrap {
+            background: linear-gradient(180deg,var(--panel),var(--panel2));
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 12px 24px rgba(0,0,0,.25);
+        }
+
+        .navbar {
+            padding-block: 10px
+        }
+
+        .navbar-brand {
+            color: #cfe0ff !important;
+            font-weight: 700;
+            letter-spacing: .2px
+        }
+
+        .nav-link {
+            color: var(--muted) !important;
+            position: relative
+        }
+
+            .nav-link:hover {
+                color: #dfe8ff !important
+            }
+
+            .nav-link::after {
+                content: "";
+                position: absolute;
+                left: 8px;
+                right: 8px;
+                bottom: 4px;
+                height: 2px;
+                background: transparent;
+                transition: background .2s, transform .2s;
+                transform: scaleX(0);
+            }
+
+            .nav-link:hover::after {
+                background: #5b8bff;
+                transform: scaleX(1)
+            }
+
+        .chip {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 4px 10px;
+            color: #b3d0ff;
+            background: rgba(59,130,246,.12);
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        .btn-outline-danger.btn-sm {
+            border-color: #8b2a39;
+            color: #ffd8de;
+            background: #3b1520;
+        }
+
+            .btn-outline-danger.btn-sm:hover {
+                background: #571a28;
+                border-color: #a43a54;
+                color: #fff;
+            }
+
+        .panel {
+            background: linear-gradient(180deg,var(--panel),var(--panel2));
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.35);
+        }
+
+        footer {
+            border-top: 1px solid var(--border) !important;
+            color: var(--muted);
+            background: #0b1324;
+        }
+
+        a.link-secondary {
+            color: #b6c7ff !important
+        }
+
+            a.link-secondary:hover {
+                color: #ffffff !important
+            }
+    </style>
+</head>
+<body>
+    <header class="navwrap">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-page="/Admin/Index">ParkingZone · Admin</a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminTopbar"
+                        aria-controls="adminTopbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div id="adminTopbar" class="collapse navbar-collapse justify-content-between">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/Index">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/User/Index">Usuarios</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/Parking/Index">Parqueos</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/Space/Index">Espacios</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/Vehicle/Index">Vehículos</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/Logs/Index">Logs</a></li>
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" asp-page="/Client/Index">Vista Cliente</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Worker/Index">Vista Trabajador</a></li>
+
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
+                            var name = User.Identity?.Name ?? "";
+                            <li class="nav-item d-flex align-items-center">
+                                <span class="chip me-2">@name (@role)</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-page="/Account/Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm" asp-page="/Account/Login">Login</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container shell">
+        <main class="panel">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="text-muted">
+        <div class="container py-3 small d-flex justify-content-between">
+            <span>&copy; @DateTime.UtcNow.Year - ParkingZone</span>
+            <a class="link-secondary" asp-area="" asp-page="/Privacy">Privacidad</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
