@@ -1,74 +1,72 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.User.CreateModel
 @{
-    ViewData["Title"] = "Create User";
+    ViewData["Title"] = "Crear usuario";
 }
 
-<h1>Create User</h1>
+<div class="pz-container my-4">
+    <div class="text-center mb-3">
+        <h1 class="pz-head display-6 mb-1">Crear usuario</h1>
+        <div class="text-muted">Completa los datos para registrar un nuevo usuario</div>
+    </div>
 
-<div class="row">
-    <div class="col-md-5">
-        <form method="post">
-            <!-- Muestra TODOS los errores (de modelo y de campos) -->
-            <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="card pz-card col-12 col-lg-10 col-xxl-8 mx-auto">
+        <div class="card-body p-4">
+            <form method="post" novalidate>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="User.Name" class="control-label"></label>
-                <input asp-for="User.Name" class="form-control" />
-                <span asp-validation-for="User.Name" class="text-danger"></span>
-            </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="User.Name" class="form-label">Nombre completo <span class="text-danger">*</span></label>
+                        <input asp-for="User.Name" class="form-control" placeholder="Mariel Vargas">
+                        <span asp-validation-for="User.Name" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="User.Email" class="control-label"></label>
-                <input asp-for="User.Email" type="email" class="form-control" />
-                <span asp-validation-for="User.Email" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6">
+                        <label asp-for="User.Email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input asp-for="User.Email" type="email" class="form-control" placeholder="usuario@correo.com">
+                        <span asp-validation-for="User.Email" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="User.Phone" class="control-label"></label>
-                <input asp-for="User.Phone" class="form-control" />
-                <span asp-validation-for="User.Phone" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6">
+                        <label asp-for="User.Phone" class="form-label">Teléfono</label>
+                        <input asp-for="User.Phone" class="form-control" placeholder="70000000">
+                        <span asp-validation-for="User.Phone" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="User.Role" class="control-label"></label>
-                <!-- Dropdown directo desde el enum -->
-                <select asp-for="User.Role"
-                        class="form-control"
-                        asp-items="Html.GetEnumSelectList<ParkingZone.Models.UserRole>()">
-                </select>
-                <span asp-validation-for="User.Role" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6">
+                        <label asp-for="User.Role" class="form-label">Rol</label>
+                        <select asp-for="User.Role" class="form-select"
+                                asp-items="Html.GetEnumSelectList<ParkingZone.Models.UserRole>()"></select>
+                        <span asp-validation-for="User.Role" class="text-danger"></span>
+                    </div>
 
-            <!-- Pedimos password en claro; el hash se genera server-side -->
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Password" class="control-label">Password</label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label">Password <span class="text-danger">*</span></label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••••">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="ConfirmPassword" class="control-label">Confirm Password</label>
-                <input asp-for="ConfirmPassword" type="password" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirmar Password <span class="text-danger">*</span></label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••••">
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group form-check mt-2">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="User.IsActive" />
-                    @Html.DisplayNameFor(m => m.User.IsActive)
-                </label>
-            </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="User.IsActive" id="isActive">
+                            <label class="form-check-label" for="isActive">@Html.DisplayNameFor(m => m.User.IsActive)</label>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a asp-page="Index" class="btn btn-secondary ms-2">Back to List</a>
-            </div>
-        </form>
+                <div class="mt-4 d-flex gap-2 justify-content-center">
+                    <button type="submit" class="btn btn-primary btn-tile">✅ Crear</button>
+                    <a asp-page="Index" class="btn btn-outline-secondary btn-tile">↩️ Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

@@ -1,72 +1,131 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.User.IndexModel
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Usuarios";
 }
 
-<h1>Index</h1>
+<div class="pz-container my-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h1 class="display-6 pz-head mb-0">Usuarios</h1>
+            <small class="text-muted">Administración de cuentas</small>
+        </div>
+        <a asp-page="Create" class="btn btn-primary btn-tile">
+            ➕ Crear nuevo
+        </a>
+    </div>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Role)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].HashPassword)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].IsActive)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].RegistrationDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.User) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HashPassword)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegistrationDate)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    <div class="card pz-card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">🔍</span>
+                        <input id="txtSearch" type="search" class="form-control" placeholder="Buscar por nombre, email o teléfono…">
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="selEstado" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="true">Activos</option>
+                        <option value="false">Inactivos</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3 text-md-end">
+                    <span class="chip">Total: @Model.User?.Count</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive pz-card">
+        <table class="table table-darkish table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.User[0].Name)</th>
+                    <th>@Html.DisplayNameFor(m => m.User[0].Email)</th>
+                    <th>@Html.DisplayNameFor(m => m.User[0].Phone)</th>
+                    <th>@Html.DisplayNameFor(m => m.User[0].Role)</th>
+                    <th>@Html.DisplayNameFor(m => m.User[0].HashPassword)</th>
+                    <th>@Html.DisplayNameFor(m => m.User[0].IsActive)</th>
+                    <th>@Html.DisplayNameFor(m => m.User[0].RegistrationDate)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tblBody">
+                @foreach (var item in Model.User)
+                {
+                    var roleClass = item.Role switch
+                    {
+                        ParkingZone.Models.UserRole.admin => "role-admin",
+                        ParkingZone.Models.UserRole.worker => "role-worker",
+                        _ => "role-client"
+                    };
+                    <tr data-search="@($"{item.Name} {item.Email} {item.Phone}").ToLower()" data-active="@item.IsActive.ToString().ToLower()">
+                        <td class="fw-semibold">@item.Name</td>
+                        <td><a href="mailto:@item.Email" class="text-decoration-none">@item.Email</a></td>
+                        <td>@item.Phone</td>
+                        <td><span class="badge @roleClass">@item.Role</span></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.HashPassword) && item.HashPassword.Length > 40)
+                            {
+                                <span class="truncate-1" title="@item.HashPassword">@item.HashPassword</span>
+                            }
+                            else
+                            {
+                                @item.HashPassword
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactivo</span>
+                            }
+                        </td>
+                        <td>@item.RegistrationDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="text-nowrap">
+                            <a asp-page="./Details" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-secondary btn-tile btn-ix me-1">
+                                <span class="ix">👁️</span><span>Ver</span>
+                            </a>
+                            <a asp-page="./Edit" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-primary btn-tile btn-ix me-1">
+                                <span class="ix">✏️</span><span>Editar</span>
+                            </a><br/>
+                            <a asp-page="./Delete" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-danger btn-tile btn-ix">
+                                <span class="ix">🗑️</span><span>Eliminar</span>
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+          const search = document.getElementById('txtSearch');
+          const estado = document.getElementById('selEstado');
+          const rows = [...document.querySelectorAll('#tblBody tr')];
+          const apply = () => {
+            const q = (search.value || '').trim().toLowerCase();
+            const st = (estado.value || '');
+            rows.forEach(r => {
+              const okQ = r.dataset.search.includes(q);
+              const okS = st === '' || r.dataset.active === st;
+              r.style.display = (okQ && okS) ? '' : 'none';
+            });
+          };
+          search.addEventListener('input', apply);
+          estado.addEventListener('change', apply);
+        })();
+    </script>
 }
-    </tbody>
-</table>
