@@ -1,48 +1,161 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.Vehicle.EditModel
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar vehículo";
 }
 
-<h1>Edit</h1>
+<style>
+    body {
+        margin: 0;
+        padding: 30px;
+        background: radial-gradient(circle at top,#101a34 0%,#0b1222 90%);
+        color: #e7eefc;
+        font-family: Arial,Helvetica,sans-serif
+    }
 
-<h4>Vehicle</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Vehicle.Id" />
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Vehicle.UserId" class="control-label"></label>
-                <select asp-for="Vehicle.UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-                <span asp-validation-for="Vehicle.UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Vehicle.Plate" class="control-label"></label>
-                <input asp-for="Vehicle.Plate" class="form-control" />
-                <span asp-validation-for="Vehicle.Plate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                
-                <label asp-for="Vehicle.Type" class="control-label"></label>
-                <select asp-for="Vehicle.Type" class="form-control"></select>
-                <span asp-validation-for="Vehicle.Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    .card {
+        max-width: 900px;
+        margin: auto;
+        background: #0f172a;
+        border: 1px solid #22304b;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.35);
+        padding: 24px
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px
+    }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.6rem
+        }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        padding: 8px 16px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .22s;
+        cursor: pointer
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #fff
+    }
+
+        .btn-primary:hover {
+            background: #facc15;
+            border-color: #facc15;
+            color: #0f172a
+        }
+
+    .btn-ghost {
+        background: transparent;
+        border-color: #334155;
+        color: #cbd5e1
+    }
+
+        .btn-ghost:hover {
+            background: #1b2a4a;
+            color: #fff
+        }
+
+    .form {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 14px
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px
+    }
+
+        .field label {
+            font-size: .9rem;
+            color: #9fb1d1
+        }
+
+    .input, select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #2a3a5a;
+        background: #0b1324;
+        color: #e2e8f0;
+        transition: border .15s,box-shadow .15s
+    }
+
+        .input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59,130,246,.25)
+        }
+
+    .help {
+        color: #fda4af;
+        font-size: .85rem
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px
+    }
+</style>
+
+<div class="card">
+    <div class="header">
+        <h1>Editar vehículo</h1>
+        <a asp-page="./Index" class="btn btn-ghost">← Volver</a>
     </div>
-</div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="help"></div>
+        <input type="hidden" asp-for="Vehicle.Id" />
+
+        <div class="form">
+            <div class="field">
+                <label asp-for="Vehicle.UserId">Usuario <span class="req">*</span></label>
+                <select asp-for="Vehicle.UserId" class="input" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="Vehicle.UserId" class="help"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Vehicle.Plate">Placa <span class="req">*</span></label>
+                <input asp-for="Vehicle.Plate" class="input" />
+                <span asp-validation-for="Vehicle.Plate" class="help"></span>
+            </div>
+
+            <div class="field" style="grid-column:span 2;">
+                <label asp-for="Vehicle.Type">Tipo</label>
+                <select asp-for="Vehicle.Type" class="input"
+                        asp-items="Html.GetEnumSelectList<ParkingZone.Models.VehicleType>()"></select>
+                <span asp-validation-for="Vehicle.Type" class="help"></span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <input type="submit" value="Guardar" class="btn btn-primary" />
+            <a asp-page="./Index" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

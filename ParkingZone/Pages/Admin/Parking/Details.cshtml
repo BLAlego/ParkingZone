@@ -1,43 +1,131 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.Parking.DetailsModel
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del parqueo";
 }
 
-<h1>Details</h1>
+<style>
+    body {
+        margin: 0;
+        padding: 30px;
+        background: radial-gradient(circle at top,#101a34 0%,#0b1222 90%);
+        color: #e7eefc;
+        font-family: Arial,Helvetica,sans-serif
+    }
 
-<div>
-    <h4>Parking</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Parking.ExitTime)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Parking.ExitTime)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Parking.Profit)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Parking.Profit)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Parking.Space)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Parking.Space.Code)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Parking.Vehicle)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Parking.Vehicle.Plate)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-page="./Index">Back to List</a>
+    .card {
+        max-width: 900px;
+        margin: auto;
+        background: #0f172a;
+        border: 1px solid #22304b;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.35);
+        padding: 24px
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px
+    }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.6rem
+        }
+
+    .list {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        row-gap: 12px;
+        column-gap: 12px;
+        margin-top: 8px
+    }
+
+    .term {
+        color: #9fb1d1
+    }
+
+    .val {
+        font-weight: 700
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #334155
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        padding: 8px 16px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .22s
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #fff
+    }
+
+        .btn-primary:hover {
+            background: #facc15;
+            border-color: #facc15;
+            color: #0f172a
+        }
+
+    .btn-ghost {
+        background: transparent;
+        border-color: #334155;
+        color: #cbd5e1
+    }
+
+        .btn-ghost:hover {
+            background: #1b2a4a;
+            color: #fff
+        }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px
+    }
+</style>
+
+<div class="card">
+    <div class="header">
+        <h1>Detalles del parqueo</h1>
+        <a asp-page="./Index" class="btn btn-ghost">← Volver</a>
+    </div>
+
+    <div class="list">
+        <div class="term">@Html.DisplayNameFor(m => m.Parking.ExitTime)</div>
+        <div class="val">@Html.DisplayFor(m => m.Parking.ExitTime)</div>
+
+        <div class="term">@Html.DisplayNameFor(m => m.Parking.Profit)</div>
+        <div class="val">@Html.DisplayFor(m => m.Parking.Profit)</div>
+
+        <div class="term">@Html.DisplayNameFor(m => m.Parking.Space)</div>
+        <div class="val"><span class="badge">@Html.DisplayFor(m => m.Parking.Space.Code)</span></div>
+
+        <div class="term">@Html.DisplayNameFor(m => m.Parking.Vehicle)</div>
+        <div class="val">@Html.DisplayFor(m => m.Parking.Vehicle.Plate)</div>
+    </div>
+
+    <div class="actions">
+        <a asp-page="./Edit"
+           asp-route-spaceId="@Model.Parking.SpaceId"
+           asp-route-vehicleId="@Model.Parking.VehicleId"
+           asp-route-entryTime="@Model.Parking.EntryTime.ToString("o")"
+           class="btn btn-primary">Editar</a>
+        <a asp-page="./Index" class="btn btn-ghost">Volver</a>
+    </div>
 </div>

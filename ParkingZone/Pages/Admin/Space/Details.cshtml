@@ -1,49 +1,166 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.Space.DetailsModel
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del Espacio";
 }
 
-<h1>Details</h1>
+<!-- === ESTILO EMBEBIDO (sin media queries) === -->
+<style>
+    body {
+        margin: 0;
+        padding: 30px;
+        background: radial-gradient(circle at top, #101a34 0%, #0b1222 90%);
+        color: #e7eefc;
+        font-family: Arial, Helvetica, sans-serif;
+    }
 
-<div>
-    <h4>Space</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Space.Code)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Space.Code)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Space.Type)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Space.Type)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Space.Available)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Space.Available)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Space.Level)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Space.Level)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Space.HourlyRate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Space.HourlyRate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Space.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+    .details-card {
+        max-width: 900px;
+        margin: auto;
+        background: #0f172a;
+        border: 1px solid #22304b;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.35);
+        padding: 28px;
+    }
+
+    .details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+        .details-header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        row-gap: 12px;
+        column-gap: 12px;
+        margin-top: 10px;
+    }
+
+    .term {
+        color: #9fb1d1;
+        font-weight: 600;
+    }
+
+    .value {
+        font-weight: 700;
+        color: #e2e8f0;
+    }
+
+    .badge-type {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #2563eb;
+        color: white;
+        font-size: .85rem;
+        text-transform: uppercase;
+    }
+
+    .badge-level {
+        background: #334155;
+        color: #e2e8f0;
+        border-radius: 6px;
+        padding: 3px 8px;
+        font-size: .85rem;
+    }
+
+    .yes {
+        color: #10b981;
+        font-weight: 700;
+    }
+
+    .no {
+        color: #ef4444;
+        font-weight: 700;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .25s;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: #facc15;
+            border-color: #facc15;
+            color: #0f172a;
+        }
+
+    .btn-ghost {
+        background: transparent;
+        border: 2px solid #334155;
+        color: #bcd0ff;
+    }
+
+        .btn-ghost:hover {
+            background: #1e2a46;
+            color: white;
+        }
+</style>
+
+<!-- === CONTENIDO === -->
+<div class="details-card">
+    <div class="details-header">
+        <h1>Detalles del Espacio</h1>
+        <a asp-page="./Index" class="btn btn-ghost">← Volver</a>
+    </div>
+
+    <div class="details-grid">
+        <div class="term">@Html.DisplayNameFor(m => m.Space.Code)</div>
+        <div class="value">@Html.DisplayFor(m => m.Space.Code)</div>
+
+        <div class="term">@Html.DisplayNameFor(m => m.Space.Type)</div>
+        <div class="value"><span class="badge-type">@Html.DisplayFor(m => m.Space.Type)</span></div>
+
+        <div class="term">@Html.DisplayNameFor(m => m.Space.Available)</div>
+        <div class="value">
+            @if (Model.Space.Available)
+            {
+                <span class="yes">Sí</span>
+            }
+            else
+            {
+                <span class="no">No</span>
+            }
+        </div>
+
+        <div class="term">@Html.DisplayNameFor(m => m.Space.Level)</div>
+        <div class="value"><span class="badge-level">L @Html.DisplayFor(m => m.Space.Level)</span></div>
+
+        <div class="term">@Html.DisplayNameFor(m => m.Space.HourlyRate)</div>
+        <div class="value">@Html.DisplayFor(m => m.Space.HourlyRate)</div>
+    </div>
+
+    <div class="actions">
+        <a asp-page="./Edit" asp-route-id="@Model.Space.Id" class="btn btn-primary">Editar</a>
+        <a asp-page="./Index" class="btn btn-ghost">Volver</a>
+    </div>
 </div>

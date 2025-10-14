@@ -1,61 +1,186 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.Space.CreateModel
 @{
-    ViewData["Title"] = "Create Space";
+    ViewData["Title"] = "Crear espacio";
 }
 
-<h1>Create</h1>
-<h4>Space</h4>
-<hr />
+<style>
+    body {
+        margin: 0;
+        padding: 30px;
+        background: radial-gradient(circle at top,#101a34 0%,#0b1222 90%);
+        color: #e7eefc;
+        font-family: Arial,Helvetica,sans-serif
+    }
 
-<div class="row">
-    <div class="col-md-5">
-        <form method="post">
-            <!-- Muestra TODOS los errores (modelo + campos) -->
-            <div asp-validation-summary="All" class="text-danger"></div>
+    .card {
+        max-width: 900px;
+        margin: auto;
+        background: #0f172a;
+        border: 1px solid #22304b;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.35);
+        padding: 24px
+    }
 
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Space.Code" class="control-label"></label>
-                <input asp-for="Space.Code" class="form-control" />
-                <span asp-validation-for="Space.Code" class="text-danger"></span>
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px
+    }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.6rem
+        }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        padding: 8px 16px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .22s ease;
+        cursor: pointer
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #fff
+    }
+
+        .btn-primary:hover {
+            background: #facc15;
+            border-color: #facc15;
+            color: #0f172a
+        }
+
+    .btn-ghost {
+        background: transparent;
+        border-color: #334155;
+        color: #cbd5e1
+    }
+
+        .btn-ghost:hover {
+            background: #1b2a4a;
+            color: #fff
+        }
+
+    .form {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 14px;
+        margin-top: 6px
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px
+    }
+
+        .field label {
+            font-size: .9rem;
+            color: #9fb1d1
+        }
+
+        .field .req {
+            color: #f87171;
+            margin-left: 4px
+        }
+
+    .input, select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #2a3a5a;
+        background: #0b1324;
+        color: #e2e8f0;
+        transition: border .15s, box-shadow .15s
+    }
+
+        .input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59,130,246,.25)
+        }
+
+    .inline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px dashed #2a3a5a;
+        background: #0b1324
+    }
+
+    .help {
+        color: #fda4af;
+        font-size: .85rem
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 14px
+    }
+</style>
+
+<div class="card">
+    <div class="header">
+        <h1>Crear espacio</h1>
+        <a asp-page="./Index" class="btn btn-ghost">← Volver</a>
+    </div>
+
+    <form method="post">
+        <div asp-validation-summary="All" class="help"></div>
+
+        <div class="form">
+            <div class="field">
+                <label asp-for="Space.Code">Código <span class="req">*</span></label>
+                <input asp-for="Space.Code" class="input" />
+                <span asp-validation-for="Space.Code" class="help"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Space.Type" class="control-label"></label>
-                <!-- Enum a dropdown -->
-                <select asp-for="Space.Type"
-                        class="form-control"
+            <div class="field">
+                <label asp-for="Space.Type">Tipo</label>
+                <select asp-for="Space.Type" class="input"
                         asp-items="Html.GetEnumSelectList<ParkingZone.Models.VehicleType>()">
                 </select>
-                <span asp-validation-for="Space.Type" class="text-danger"></span>
+                <span asp-validation-for="Space.Type" class="help"></span>
             </div>
 
-            <div class="form-group form-check">
-                <label class="form-check-label">
+            <div class="field" style="grid-column: span 2;">
+                <label class="inline">
                     <input class="form-check-input" asp-for="Space.Available" />
                     @Html.DisplayNameFor(m => m.Space.Available)
                 </label>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Space.Level" class="control-label"></label>
-                <input asp-for="Space.Level" type="number" class="form-control" />
-                <span asp-validation-for="Space.Level" class="text-danger"></span>
+            <div class="field">
+                <label asp-for="Space.Level">Nivel</label>
+                <input asp-for="Space.Level" type="number" class="input" />
+                <span asp-validation-for="Space.Level" class="help"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Space.HourlyRate" class="control-label"></label>
-                <input asp-for="Space.HourlyRate" type="number" step="0.01" class="form-control" />
-                <span asp-validation-for="Space.HourlyRate" class="text-danger"></span>
+            <div class="field">
+                <label asp-for="Space.HourlyRate">Tarifa por hora</label>
+                <input asp-for="Space.HourlyRate" type="number" step="0.01" class="input" />
+                <span asp-validation-for="Space.HourlyRate" class="help"></span>
             </div>
+        </div>
 
-            <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <a asp-page="Index" class="btn btn-secondary ms-2">Back to List</a>
-            </div>
-        </form>
-    </div>
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">Crear</button>
+            <a asp-page="./Index" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
