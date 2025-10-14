@@ -1,54 +1,188 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.Parking.IndexModel
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Parqueos";
 }
 
-<h1>Index</h1>
+<style>
+    body {
+        margin: 0;
+        padding: 30px;
+        background: radial-gradient(circle at top,#101a34 0%,#0b1222 90%);
+        color: #e7eefc;
+        font-family: Arial,Helvetica,sans-serif
+    }
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Parking[0].ExitTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Parking[0].Profit)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Parking[0].Space)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Parking[0].Vehicle)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Parking) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExitTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Profit)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Space.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vehicle.Plate)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    .wrap {
+        max-width: 1100px;
+        margin: auto;
+        background: #0f172a;
+        border: 1px solid #22304b;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.35);
+        padding: 24px
+    }
+
+    .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px
+    }
+
+        .head h1 {
+            margin: 0;
+            font-size: 1.6rem
+        }
+
+    .btn-main {
+        background: #3b82f6;
+        border: 2px solid #3b82f6;
+        color: #fff;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .22s
+    }
+
+        .btn-main:hover {
+            background: #facc15;
+            border-color: #facc15;
+            color: #0f172a
+        }
+
+    .table-box {
+        width: 100%;
+        overflow-x: auto
+    }
+
+    .tb {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px
+    }
+
+        .tb thead th {
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: #9fb1d1;
+            border-bottom: 1px solid #22304b;
+            padding: 10px 8px
+        }
+
+        .tb tbody tr {
+            background: #0b1222;
+            transition: all .15s
+        }
+
+            .tb tbody tr:hover {
+                background: #16294f;
+                transform: scale(1.006)
+            }
+
+        .tb td {
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #1f2a44;
+            color: #e2e8f0
+        }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px
+    }
+
+    .btn-icon {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 2px solid #3b82f6;
+        background: #0f172a;
+        color: #3b82f6;
+        text-decoration: none;
+        transition: all .22s
+    }
+
+        .btn-icon:hover {
+            background: #facc15;
+            border-color: #facc15;
+            color: #0f172a;
+            transform: translateY(-2px)
+        }
+
+    .icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #334155
+    }
+</style>
+
+<div class="wrap">
+    <div class="head">
+        <h1>Parqueos</h1>
+        <a asp-page="Create" class="btn-main">+ Nuevo</a>
+    </div>
+
+    <div class="table-box">
+        <table class="tb">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.Parking[0].ExitTime)</th>
+                    <th>@Html.DisplayNameFor(m => m.Parking[0].Profit)</th>
+                    <th>@Html.DisplayNameFor(m => m.Parking[0].Space)</th>
+                    <th>@Html.DisplayNameFor(m => m.Parking[0].Vehicle)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Parking)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(_ => item.ExitTime)</td>
+                        <td>@Html.DisplayFor(_ => item.Profit)</td>
+                        <td><span class="badge">@Html.DisplayFor(_ => item.Space.Code)</span></td>
+                        <td>@Html.DisplayFor(_ => item.Vehicle.Plate)</td>
+                        <td class="actions">
+                            <a asp-page="./Details"
+                               asp-route-spaceId="@item.SpaceId"
+                               asp-route-vehicleId="@item.VehicleId"
+                               asp-route-entryTime="@item.EntryTime.ToString("o")"
+                               class="btn-icon" title="Detalles">
+                                <svg class="icon" viewBox="0 0 16 16">
+                                    <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5.5L9.5 0H4zm5 1.5L13.5 6H9a.5.5 0 0 1-.5-.5V1.5z" />
+                                </svg>
+                            </a>
+                            <a asp-page="./Edit"
+                               asp-route-spaceId="@item.SpaceId"
+                               asp-route-vehicleId="@item.VehicleId"
+                               asp-route-entryTime="@item.EntryTime.ToString("o")"
+                               class="btn-icon" title="Editar">
+                                <svg class="icon" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L4.207 15.5H1v-3.207L12.146.146zM2 13.793V14.5h.707l9.793-9.793-.707-.707L2 13.793z" /></svg>
+                            </a>
+                            <a asp-page="./Delete"
+                               asp-route-spaceId="@item.SpaceId"
+                               asp-route-vehicleId="@item.VehicleId"
+                               asp-route-entryTime="@item.EntryTime.ToString("o")"
+                               class="btn-icon" title="Eliminar">
+                                <svg class="icon" viewBox="0 0 16 16"><path d="M5.5 5.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0V6H6v6.5a.5.5 0 0 1-1 0v-7z" /><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4H2.5a1 1 0 0 1-1-1V2h13v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118z" /></svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
