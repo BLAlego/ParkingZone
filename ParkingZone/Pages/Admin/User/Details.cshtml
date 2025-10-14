@@ -1,61 +1,34 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.User.DetailsModel
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle de usuario";
 }
 
-<h1>Details</h1>
+<div class="pz-container my-4">
+    <div class="text-center mb-3">
+        <h1 class="pz-head display-6 mb-1">Detalle de usuario</h1>
+        <div class="text-muted">Información completa del usuario</div>
+    </div>
 
-<div>
-    <h4>User</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.Email)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.Phone)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.Phone)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.Role)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.Role)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.HashPassword)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.HashPassword)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.IsActive)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.IsActive)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.RegistrationDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.RegistrationDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.User.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+    <div class="card pz-card col-12 col-lg-10 col-xxl-8 mx-auto">
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-6"><strong>Nombre:</strong><br>@Model.User.Name</div>
+                <div class="col-md-6"><strong>Email:</strong><br><a href="mailto:@Model.User.Email">@Model.User.Email</a></div>
+                <div class="col-md-6"><strong>Teléfono:</strong><br>@Model.User.Phone</div>
+                <div class="col-md-6"><strong>Rol:</strong><br><span class="badge role-client">@Model.User.Role</span></div>
+                <div class="col-12">
+                    <strong>HashPassword:</strong>
+                    <pre class="small p-2 rounded mt-1" style="background:#0f1c33;border:1px solid var(--pz-border);">@Model.User.HashPassword</pre>
+                </div>
+                <div class="col-md-6"><strong>Estado:</strong><br>@(Model.User.IsActive ? "Activo" : "Inactivo")</div>
+                <div class="col-md-6"><strong>Registrado:</strong><br>@Model.User.RegistrationDate.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2 justify-content-center">
+                <a asp-page="./Edit" asp-route-id="@Model.User.Id" class="btn btn-primary btn-tile">✏️ Editar</a>
+                <a asp-page="./Index" class="btn btn-outline-secondary btn-tile">↩️ Volver</a>
+            </div>
+        </div>
+    </div>
 </div>

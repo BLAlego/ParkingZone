@@ -1,72 +1,88 @@
 ﻿@page
 @model ParkingZone.Pages.Admin.User.EditModel
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar usuario";
 }
 
-<h1>Edit</h1>
+<div class="pz-container my-4">
+    <div class="text-center mb-3">
+        <h1 class="pz-head display-6 mb-1">Editar usuario</h1>
+        <div class="text-muted">Actualiza los datos del usuario seleccionado</div>
+    </div>
 
-<h4>User</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="User.Id" />
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="User.Name" class="control-label"></label>
-                <input asp-for="User.Name" class="form-control" />
-                <span asp-validation-for="User.Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="User.Email" class="control-label"></label>
-                <input asp-for="User.Email" class="form-control" />
-                <span asp-validation-for="User.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                
-                <label asp-for="User.Phone" class="control-label"></label>
-                <input asp-for="User.Phone" class="form-control" />
-                <span asp-validation-for="User.Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                
-                <label asp-for="User.Role" class="control-label"></label>
-                <select asp-for="User.Role" class="form-control"></select>
-                <span asp-validation-for="User.Role" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="User.HashPassword" class="control-label"></label>
-                <input asp-for="User.HashPassword" class="form-control" />
-                <span asp-validation-for="User.HashPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="User.IsActive" /> @Html.DisplayNameFor(model => model.User.IsActive)
-                </label>
-            </div>
-            <div class="form-group">
-                
-                <label asp-for="User.RegistrationDate" class="control-label"></label>
-                <input asp-for="User.RegistrationDate" class="form-control" />
-                <span asp-validation-for="User.RegistrationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card pz-card col-12 col-lg-10 col-xxl-8 mx-auto">
+        <div class="card-body p-4">
+            <form method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="User.Id" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="User.Name" class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input asp-for="User.Name" class="form-control">
+                        <span asp-validation-for="User.Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="User.Email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input asp-for="User.Email" type="email" class="form-control">
+                        <span asp-validation-for="User.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="User.Phone" class="form-label">Teléfono</label>
+                        <input asp-for="User.Phone" class="form-control">
+                        <span asp-validation-for="User.Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="User.Role" class="form-label">Rol</label>
+                        <select asp-for="User.Role" class="form-select"
+                                asp-items="Html.GetEnumSelectList<ParkingZone.Models.UserRole>()"></select>
+                        <span asp-validation-for="User.Role" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Hash actual</label>
+                        <input asp-for="User.HashPassword" class="form-control" readonly value="@Model.User?.HashPassword" />
+                        <div class="form-text">Por seguridad, el hash no se edita aquí.</div>
+                        <span asp-validation-for="User.HashPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Nueva contraseña (opcional)</label>
+                        <input name="NewPassword" type="password" class="form-control" placeholder="Dejar vacío para mantener">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirmar nueva contraseña</label>
+                        <input name="ConfirmNewPassword" type="password" class="form-control" placeholder="Dejar vacío para mantener">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="User.RegistrationDate" class="form-label">Fecha de registro</label>
+                        <input asp-for="User.RegistrationDate" class="form-control" />
+                        <span asp-validation-for="User.RegistrationDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="User.IsActive" id="isActiveEdit">
+                            <label class="form-check-label" for="isActiveEdit">@Html.DisplayNameFor(m => m.User.IsActive)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2 justify-content-center">
+                    <button type="submit" class="btn btn-primary btn-tile">💾 Guardar</button>
+                    <a asp-page="./Index" class="btn btn-outline-secondary btn-tile">↩️ Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+ }
