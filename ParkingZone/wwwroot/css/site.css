@@ -29,3 +29,137 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+/* ===== Apariencia general ===== */
+.pz-container {
+    max-width: 1200px;
+    margin-inline: auto;
+}
+
+.pz-head {
+    letter-spacing: .2px;
+}
+
+.pz-card {
+    background: var(--pz-bg, #0f1c33);
+    border: 1px solid var(--pz-border, #243957);
+    border-radius: 14px;
+}
+
+.btn-tile {
+    border-radius: 10px;
+}
+
+/* ===== Campos & errores ===== */
+.form-floating > label {
+    color: #94a3b8;
+}
+
+.field-error {
+    display: block;
+    margin-top: .25rem;
+    color: #ff6b6b;
+    font-size: .85rem;
+}
+
+/* ===== Tabla ===== */
+.table-list {
+    --tbl-border: #1f2f49;
+}
+
+    .table-list thead th {
+        border-bottom: 1px solid var(--tbl-border);
+        font-weight: 600;
+    }
+
+    .table-list tbody tr + tr {
+        border-top: 1px solid var(--tbl-border);
+    }
+
+.truncate-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 420px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+/* ===== Chips / badges ===== */
+.chip {
+    display: inline-block;
+    padding: .35rem .6rem;
+    border: 1px solid var(--pz-border,#2a3f61);
+    border-radius: 999px;
+    font-size: .85rem;
+    background: #0b1627;
+}
+
+.role-badge, .badge.role-admin, .badge.role-worker, .badge.role-client {
+    border: 1px solid transparent;
+}
+
+.badge.role-admin {
+    background: #22162e;
+    color: #d8b4fe;
+    border-color: #6b21a8;
+}
+
+.badge.role-worker {
+    background: #112a2a;
+    color: #99f6e4;
+    border-color: #0d9488;
+}
+
+.badge.role-client {
+    background: #10233a;
+    color: #93c5fd;
+    border-color: #2563eb;
+}
+
+/* ===== Code block en detalles ===== */
+.code-block {
+    background: #0b1627;
+    border: 1px solid var(--pz-border,#243957);
+    color: #a0aec0;
+    padding: .75rem;
+    border-radius: 10px;
+    max-height: 180px;
+    overflow: auto;
+}
+
+/* ===== Info blocks ===== */
+.info-block .label {
+    font-size: .8rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.info-block .value {
+    font-size: 1rem;
+}
+
+/* ===== Bootstrap helpers (si usas tema claro) ===== */
+.bg-success-subtle {
+    background: #e8f6ee;
+}
+
+.text-success-emphasis {
+    color: #157347;
+}
+
+.border-success-subtle {
+    border-color: #bfe6cf !important;
+}
+
+.bg-secondary-subtle {
+    background: #eef1f4;
+}
+
+.text-secondary-emphasis {
+    color: #495057;
+}
+
+.border-secondary-subtle {
+    border-color: #d8dde3 !important;
+}

@@ -5,67 +5,84 @@
 }
 
 <div class="pz-container my-4">
-    <div class="text-center mb-3">
-        <h1 class="pz-head display-6 mb-1">Editar usuario</h1>
-        <div class="text-muted">Actualiza los datos del usuario seleccionado</div>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h1 class="pz-head h3 mb-0">Editar usuario</h1>
+            <small class="text-muted">Actualiza los datos del usuario seleccionado</small>
+        </div>
+        <a asp-page="./Index" class="btn btn-outline-secondary btn-tile">↩️ Volver</a>
     </div>
 
-    <div class="card pz-card col-12 col-lg-10 col-xxl-8 mx-auto">
+    <div class="card pz-card shadow-sm col-12 col-xl-10 mx-auto">
         <div class="card-body p-4">
             <form method="post" novalidate>
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 mb-4"></div>
                 <input type="hidden" asp-for="User.Id" />
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label asp-for="User.Name" class="form-label">Nombre <span class="text-danger">*</span></label>
-                        <input asp-for="User.Name" class="form-control">
-                        <span asp-validation-for="User.Name" class="text-danger"></span>
+                        <div class="form-floating">
+                            <input asp-for="User.Name" class="form-control" placeholder="Nombre">
+                            <label asp-for="User.Name">Nombre <span class="text-danger">*</span></label>
+                        </div>
+                        <span class="field-error" asp-validation-for="User.Name"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="User.Email" class="form-label">Email <span class="text-danger">*</span></label>
-                        <input asp-for="User.Email" type="email" class="form-control">
-                        <span asp-validation-for="User.Email" class="text-danger"></span>
+                        <div class="form-floating">
+                            <input asp-for="User.Email" type="email" class="form-control" placeholder="Email">
+                            <label asp-for="User.Email">Email <span class="text-danger">*</span></label>
+                        </div>
+                        <span class="field-error" asp-validation-for="User.Email"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="User.Phone" class="form-label">Teléfono</label>
-                        <input asp-for="User.Phone" class="form-control">
-                        <span asp-validation-for="User.Phone" class="text-danger"></span>
+                        <div class="form-floating">
+                            <input asp-for="User.Phone" class="form-control" placeholder="Teléfono">
+                            <label asp-for="User.Phone">Teléfono</label>
+                        </div>
+                        <span class="field-error" asp-validation-for="User.Phone"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="User.Role" class="form-label">Rol</label>
-                        <select asp-for="User.Role" class="form-select"
-                                asp-items="Html.GetEnumSelectList<ParkingZone.Models.UserRole>()"></select>
-                        <span asp-validation-for="User.Role" class="text-danger"></span>
+                        <div class="form-floating">
+                            <select asp-for="User.Role" class="form-select"
+                                    asp-items="Html.GetEnumSelectList<ParkingZone.Models.UserRole>()"></select>
+                            <label asp-for="User.Role">Rol</label>
+                        </div>
+                        <span class="field-error" asp-validation-for="User.Role"></span>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label">Hash actual</label>
-                        <input asp-for="User.HashPassword" class="form-control" readonly value="@Model.User?.HashPassword" />
+                        <label class="form-label mb-1">Hash actual</label>
+                        <input asp-for="User.HashPassword" class="form-control form-control-sm" readonly value="@Model.User?.HashPassword" />
                         <div class="form-text">Por seguridad, el hash no se edita aquí.</div>
-                        <span asp-validation-for="User.HashPassword" class="text-danger"></span>
+                        <span class="field-error" asp-validation-for="User.HashPassword"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label">Nueva contraseña (opcional)</label>
-                        <input name="NewPassword" type="password" class="form-control" placeholder="Dejar vacío para mantener">
+                        <div class="form-floating">
+                            <input name="NewPassword" type="password" class="form-control" placeholder="Nueva contraseña">
+                            <label>Nueva contraseña (opcional)</label>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Confirmar nueva contraseña</label>
-                        <input name="ConfirmNewPassword" type="password" class="form-control" placeholder="Dejar vacío para mantener">
+                        <div class="form-floating">
+                            <input name="ConfirmNewPassword" type="password" class="form-control" placeholder="Confirmar">
+                            <label>Confirmar nueva contraseña</label>
+                        </div>
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="User.RegistrationDate" class="form-label">Fecha de registro</label>
-                        <input asp-for="User.RegistrationDate" class="form-control" />
-                        <span asp-validation-for="User.RegistrationDate" class="text-danger"></span>
+                        <div class="form-floating">
+                            <input asp-for="User.RegistrationDate" class="form-control" />
+                            <label asp-for="User.RegistrationDate">Fecha de registro</label>
+                        </div>
+                        <span class="field-error" asp-validation-for="User.RegistrationDate"></span>
                     </div>
 
-                    <div class="col-md-6 d-flex align-items-end">
-                        <div class="form-check">
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check form-switch ms-md-2">
                             <input class="form-check-input" asp-for="User.IsActive" id="isActiveEdit">
                             <label class="form-check-label" for="isActiveEdit">@Html.DisplayNameFor(m => m.User.IsActive)</label>
                         </div>
@@ -74,7 +91,7 @@
 
                 <div class="mt-4 d-flex gap-2 justify-content-center">
                     <button type="submit" class="btn btn-primary btn-tile">💾 Guardar</button>
-                    <a asp-page="./Index" class="btn btn-outline-secondary btn-tile">↩️ Cancelar</a>
+                    <a asp-page="./Index" class="btn btn-outline-secondary btn-tile">Cancelar</a>
                 </div>
             </form>
         </div>
@@ -85,4 +102,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
- }
+}
