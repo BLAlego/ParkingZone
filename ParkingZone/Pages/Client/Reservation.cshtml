@@ -3,14 +3,13 @@
 @using Microsoft.AspNetCore.Antiforgery
 @inject IAntiforgery Antiforgery
 @{
-    ViewData["Title"] = "Mis Reservas";
+    ViewData["Title"] = "Reservas";
     var spacesJson = (string)(ViewData["SpacesJson"] ?? "[]");
     var currentReservation = Model.ActiveReservation;
-
-    // Genera y expone el token antiforgery para fetch
     var tokens = Antiforgery.GetAndStoreTokens(HttpContext);
 }
-<!— token antiforgery accesible por JS —>
+
+<!-- token antiforgery accesible por JS -->
 <meta name="request-verification-token" content="@tokens.RequestToken" />
 
 @if (currentReservation != null)
@@ -55,7 +54,7 @@ else
         <header class="bar">
             <div>
                 <h2>Reservar un espacio</h2>
-                <p class="muted">Selecciona un espacio disponible. La reserva dura 30 minutos.</p>
+                <p class="muted">Haz clic en un espacio del mapa. La reserva dura 30 minutos.</p>
             </div>
             <div class="legend">
                 <span class="chip ok">Disponible</span>
@@ -64,69 +63,122 @@ else
             </div>
         </header>
 
-        <section class="filters">
-            <div class="field">
-                <label for="f-q">Buscar</label>
-                <input id="f-q" type="search" placeholder="Ej: A01" />
-            </div>
-            <label class="field check">
-                <input id="f-only-available" type="checkbox" />
-                <span>Sólo disponibles</span>
-            </label>
-        </section>
+        <!-- MAPA SOBRE IMAGEN CUADRADA (1024 x 1024 viewBox) -->
+        <div class="pz-map-wrap square">
+            <svg id="pz-map" viewBox="0 0 1024 1024" preserveAspectRatio="xMidYMid meet" class="pz-map">
+                <image href="/img/parking-map-final-v7.png" x="0" y="0" width="1024" height="1024" />
+                <g id="pz-slots"></g>
+            </svg>
+        </div>
 
-        <section class="grid-wrap">
-            <div id="grid-spaces" class="grid"></div>
-            <p id="grid-empty" class="muted" hidden>No hay espacios que coincidan.</p>
-        </section>
+        <p class="muted" style="margin-top:8px">Pasa el mouse para ver el código. Verde=Libre, Ámbar=No disponible, Rojo=Ocupado.</p>
     </section>
 
     <div id="toaster" class="toaster" aria-live="polite"></div>
 
     <script>
-        // Dataset mínimo desde backend
-        const PZ_SPACES = @Html.Raw(spacesJson);
+        // Datos iniciales desde backend
+        // @@ts-ignore
+        const PZ_SPACES = (@Html.Raw(spacesJson));
+
 
         // Antiforgery
         const XSRF = document.querySelector('meta[name="request-verification-token"]')?.content ?? "";
 
-        // UI refs
-        const grid = document.getElementById("grid-spaces");
-        const empty = document.getElementById("grid-empty");
-        const q = document.getElementById("f-q");
-        const onlyAvail = document.getElementById("f-only-available");
+        // --- POSICIONES (coinciden con un campo tipo el de tu imagen) ---
+        // 5 arriba y 5 abajo para autos (#001..#010)
+        // 5 motos al centro-derecha (#M001..#M005)
+        // Cada objeto: x,y,w,h en viewBox 1024x1024
+                // --- POSICIONES (coinciden con tu imagen 1024x1024 v7) ---
+        const POSITIONS = {
+            "001": { x: 70,  y: 260, w: 120, h: 70, r: 10 },
+            "002": { x: 200, y: 260, w: 120, h: 70, r: 10 },
+            "003": { x: 400, y: 260, w: 120, h: 70, r: 10 },
+            "004": { x: 500, y: 260, w: 120, h: 70, r: 10 },
+            "005": { x: 600, y: 260, w: 120, h: 70, r: 10 },
+
+            // AUTOS (abajo) — centrados en su cuadro
+            "006": { x: 70,  y: 690, w: 120, h: 70, r: 10 },
+            "007": { x: 200, y: 690, w: 120, h: 70, r: 10 },
+            "008": { x: 400, y: 690, w: 120, h: 70, r: 10 },
+            "009": { x: 500, y: 690, w: 120, h: 70, r: 10 },
+            "010": { x: 500, y: 690, w: 120, h: 70, r: 10 },
+
+            // MOTOS (v7: más grandes, separadas y sin línea amarilla)
+            "M001": { x: 880, y: 370, w: 90,  h: 55, r: 8 },
+          "M002": { x: 880, y: 465, w: 90,  h: 55, r: 8 },
+          "M003": { x: 880, y: 560, w: 90,  h: 55, r: 8 },
+          "M004": { x: 880, y: 655, w: 90,  h: 55, r: 8 },
+          "M005": { x: 880, y: 750, w: 90,  h: 55, r: 8 },
+        };
+
+
+        const layer = document.getElementById("pz-slots");
         const toast = document.getElementById("toaster");
 
-        function render(){
-            grid.innerHTML = "";
-            let list = PZ_SPACES.slice();
-            const query = (q.value||"").toLowerCase();
-            const filterAvail = !!onlyAvail.checked;
+        // Render inicial
+        render(PZ_SPACES);
 
-            if (query) list = list.filter(x => x.code.toLowerCase().includes(query));
-            if (filterAvail) list = list.filter(x => x.state === "available");
+        // Polling cada 5s
+        setInterval(async () => {
+            try {
+                const res = await fetch("/Client/Reservation?handler=Map");
+                if (!res.ok) return;
+                const fresh = await res.json();
+                render(fresh);
+            } catch {}
+        }, 5000);
 
-            empty.hidden = list.length > 0;
+        function render(spaces){
+            layer.innerHTML = "";
+            for (const s of spaces){
+                const pos = POSITIONS[s.code];
+                if (!pos) continue;
 
-            for (const s of list){
-                const el = document.createElement("button");
-                el.type = "button";
-                el.className = `tile ${s.state}`;
-                el.setAttribute("aria-label", `Espacio ${s.code}, ${humanState(s.state)}`);
-                el.innerHTML = `
-                    <span class="badge">#${s.code}</span>
-                    <span class="state">${humanState(s.state)}</span>
-                `;
-                if (s.state !== "available") el.disabled = true;
-                el.addEventListener("click", () => reserve(s.id, el));
-                grid.appendChild(el);
+                const color = stateColor(s.state);
+                const rect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+                rect.setAttribute("x", pos.x);
+                rect.setAttribute("y", pos.y);
+                rect.setAttribute("width", pos.w);
+                rect.setAttribute("height", pos.h);
+                rect.setAttribute("rx", pos.r || 6);
+                rect.setAttribute("fill", color.fill);
+                rect.setAttribute("stroke", color.stroke);
+                rect.setAttribute("stroke-width", 3);
+                rect.classList.add("pz-slot", `is-${s.state}`);
+                rect.setAttribute("aria-label", `Espacio ${s.code} — ${humanState(s.state)}`);
+
+                if (s.state === "available"){
+                    rect.style.cursor = "pointer";
+                    rect.addEventListener("click", () => reserve(s.id, rect));
+                } else {
+                    rect.style.cursor = "not-allowed";
+                }
+
+                // etiqueta discreta
+                const label = document.createElementNS("http://www.w3.org/2000/svg","text");
+                label.setAttribute("x", pos.x + pos.w/2);
+                label.setAttribute("y", pos.y + pos.h/2 + 5);
+                label.setAttribute("text-anchor", "middle");
+                label.setAttribute("font-size", 14);
+                label.setAttribute("font-weight", "700");
+                label.setAttribute("fill", "#e7eefc");
+                label.textContent = `#${s.code}`;
+
+                layer.appendChild(rect);
+                layer.appendChild(label);
             }
         }
 
         function humanState(st){ return st==="busy"?"Ocupado":st==="reserved"?"No disponible":"Disponible"; }
+        function stateColor(st){
+            if (st === "available") return { fill: "rgba(16,185,129,.25)", stroke: "rgba(16,185,129,.95)" };   // verde
+            if (st === "reserved")  return { fill: "rgba(245,158,11,.20)", stroke: "rgba(245,158,11,.95)" };   // ámbar
+            return { fill: "rgba(239,68,68,.20)", stroke: "rgba(239,68,68,.95)" };                             // rojo
+        }
 
-        async function reserve(spaceId, el){
-            el.classList.add("busyspin");
+        async function reserve(spaceId, rectEl){
+            rectEl.classList.add("pz-busy");
             try{
                 const res = await fetch("/Client/Reservation?handler=Create", {
                     method: "POST",
@@ -138,21 +190,19 @@ else
                 });
 
                 if (res.ok){
-                    toastOk("Reserva creada, redirigiendo…");
+                    showToast("Reserva creada, actualizando…", "ok");
                     setTimeout(()=>location.reload(), 600);
                 } else {
                     const msg = await res.text();
-                    toastErr(msg || "No se pudo reservar el espacio.");
-                    el.classList.remove("busyspin");
+                    showToast(msg || "No se pudo reservar el espacio.", "err");
+                    rectEl.classList.remove("pz-busy");
                 }
-            } catch (e){
-                toastErr("Error de red. Intenta de nuevo.");
-                el.classList.remove("busyspin");
+            } catch {
+                showToast("Error de red. Intenta de nuevo.", "err");
+                rectEl.classList.remove("pz-busy");
             }
         }
 
-        function toastOk(msg){ showToast(msg, "ok"); }
-        function toastErr(msg){ showToast(msg, "err"); }
         function showToast(msg, kind){
             const t = document.createElement("div");
             t.className = `toast ${kind}`;
@@ -161,9 +211,6 @@ else
             requestAnimationFrame(()=>t.classList.add("show"));
             setTimeout(()=>{ t.classList.remove("show"); setTimeout(()=>t.remove(), 200); }, 2500);
         }
-
-        [q, onlyAvail].forEach(el => el.addEventListener("input", render));
-        render();
     </script>
 }
 
@@ -175,10 +222,6 @@ else
         --border: #1f2a44;
         --muted: #93a4bf;
         --txt: #e7eefc;
-        --ok: #10b981;
-        --warn: #f59e0b;
-        --err: #ef4444;
-        --primary: #3b82f6;
         --r: 14px;
     }
 
@@ -242,112 +285,6 @@ else
     .chip-live {
         background: rgba(59,130,246,.12);
         color: #b3d0ff
-    }
-
-    .filters {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 12px;
-        margin-bottom: 10px
-    }
-
-    .field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px
-    }
-
-    .check {
-        flex-direction: row;
-        align-items: center;
-        gap: 8px
-    }
-
-    .field input[type="search"] {
-        background: #0b152a;
-        border: 1px solid var(--border);
-        color: var(--txt);
-        border-radius: 10px;
-        padding: 10px
-    }
-
-    .grid-wrap {
-        margin-top: 8px
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
-        gap: 14px
-    }
-
-    .tile {
-        position: relative;
-        display: grid;
-        gap: 8px;
-        align-content: center;
-        justify-items: center;
-        padding: 16px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        background: #0b152a;
-        color: var(--txt);
-        cursor: pointer;
-        transition: transform .15s, box-shadow .15s, border-color .15s
-    }
-
-        .tile:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,.25)
-        }
-
-        .tile .badge {
-            font-weight: 700;
-            letter-spacing: .5px
-        }
-
-        .tile .state {
-            font-size: .95rem;
-            color: var(--muted)
-        }
-
-        .tile.available {
-            outline: 2px solid rgba(16,185,129,.22)
-        }
-
-        .tile.reserved {
-            outline: 2px solid rgba(245,158,11,.22);
-            filter: saturate(0.8)
-        }
-
-        .tile.busy {
-            outline: 2px solid rgba(239,68,68,.22);
-            filter: saturate(0.8)
-        }
-
-        .tile:disabled {
-            opacity: .5;
-            cursor: not-allowed
-        }
-
-        .tile.busyspin::after {
-            content: "";
-            position: absolute;
-            inset: auto 12px 12px auto;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #7aa2ff;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin .8s linear infinite
-        }
-    keyframes spin {
-        to
-
-    {
-        transform: rotate(360deg)
-    }
-
     }
 
     .active {
@@ -431,4 +368,44 @@ else
             opacity: 1;
             transform: translateY(0)
         }
-</style>
+
+    /* tamaño del mapa: máx 820px y centrado */
+    .pz-map-wrap.square {
+        aspect-ratio: 1/1;
+        background: #0b152a;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        max-width: 820px; /* <- controla el ancho máximo del mapa */
+        width: 100%;
+        margin: 0 auto; /* centrado */
+    }
+
+    .pz-map {
+        width: 100%;
+        height: 100%;
+        display: block
+    }
+
+    .pz-slot.is-available:hover {
+        filter: saturate(1.2)
+    }
+
+    .pz-busy {
+        animation: pzPulse .6s linear infinite
+    }
+
+    /* IMPORTANTE: en Razor escribe @@keyframes para renderizar @@keyframes */
+    @@keyframes pzPulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: .5;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }</style>

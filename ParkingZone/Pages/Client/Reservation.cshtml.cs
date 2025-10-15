@@ -10,28 +10,25 @@ using System.Text.Json;
 namespace ParkingZone.Pages.Client
 {
     [Authorize(Roles = "client")]
-    [ValidateAntiForgeryToken] // valida token por defecto en POST
+    [ValidateAntiForgeryToken]
     public class ReservationModel : PageModel
     {
         private readonly ParkingZoneContext _context;
         public ReservationModel(ParkingZoneContext context) => _context = context;
 
-        [BindProperty]
-        public Reservation Reservation { get; set; } = new();
+        [BindProperty] public Reservation Reservation { get; set; } = new();
         public Reservation? ActiveReservation { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            // Reserva activa del usuario
             ActiveReservation = await _context.Reservations
                 .Include(r => r.Space)
                 .Where(r => r.UserId == userId && r.Status == ReservationStatus.active)
                 .OrderByDescending(r => r.EntryTime)
                 .FirstOrDefaultAsync();
 
-            // Si expiró (30 min) se finaliza
             if (ActiveReservation != null &&
                 DateTime.UtcNow > ActiveReservation.EntryTime.AddMinutes(30))
             {
@@ -43,7 +40,6 @@ namespace ParkingZone.Pages.Client
 
             if (ActiveReservation != null) return Page();
 
-            // Estados globales de espacios
             var activeIds = await _context.Reservations.AsNoTracking()
                 .Where(r => r.Status == ReservationStatus.active)
                 .Select(r => r.SpaceId)
@@ -66,14 +62,37 @@ namespace ParkingZone.Pages.Client
             return Page();
         }
 
-        // POST via fetch: /Client/Reservation?handler=Create
+        // GET para polling del mapa
+        public async Task<IActionResult> OnGetMapAsync()
+        {
+            var activeIds = await _context.Reservations.AsNoTracking()
+                .Where(r => r.Status == ReservationStatus.active)
+                .Select(r => r.SpaceId)
+                .Distinct()
+                .ToListAsync();
+
+            var spaces = await _context.Spaces.AsNoTracking()
+                .OrderBy(s => s.Code)
+                .Select(s => new
+                {
+                    id = s.Id,
+                    code = s.Code,
+                    state = activeIds.Contains(s.Id)
+                        ? "busy"
+                        : (s.Available ? "available" : "reserved")
+                })
+                .ToListAsync();
+
+            return new JsonResult(spaces);
+        }
+
+        // POST crear reserva
         public async Task<IActionResult> OnPostCreateAsync([FromBody] JsonElement data)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             if (!data.TryGetProperty("spaceId", out var p)) return BadRequest("Solicitud inválida.");
             var spaceId = p.GetInt32();
 
-            // No permitir dos activas del mismo usuario
             var already = await _context.Reservations
                 .AnyAsync(r => r.UserId == userId && r.Status == ReservationStatus.active);
             if (already) return BadRequest("Ya tienes una reserva activa.");
@@ -82,18 +101,15 @@ namespace ParkingZone.Pages.Client
             if (space == null) return BadRequest("Espacio inexistente.");
             if (!space.Available) return BadRequest("Espacio no disponible.");
 
-            // Espacio ocupado por otro
             var occupied = await _context.Reservations
                 .AnyAsync(r => r.SpaceId == spaceId && r.Status == ReservationStatus.active);
             if (occupied) return BadRequest("El espacio está ocupado.");
 
-            // Crear reserva (30 mins de vida desde ahora)
-            var nowUtc = DateTime.UtcNow;
             var reservation = new Reservation
             {
                 UserId = userId,
                 SpaceId = spaceId,
-                EntryTime = nowUtc,
+                EntryTime = DateTime.UtcNow,
                 Status = ReservationStatus.active
             };
 
@@ -103,7 +119,7 @@ namespace ParkingZone.Pages.Client
             return new OkResult();
         }
 
-        // POST por form: /Client/Reservation?handler=Cancel
+        // POST cancelar reserva activa
         public async Task<IActionResult> OnPostCancelAsync()
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -114,7 +130,7 @@ namespace ParkingZone.Pages.Client
 
             if (active != null)
             {
-                active.Status = ReservationStatus.cancelled; // usa la variante consistente del enum
+                active.Status = ReservationStatus.cancelled;
                 _context.Update(active);
                 await _context.SaveChangesAsync();
             }
@@ -123,3 +139,4 @@ namespace ParkingZone.Pages.Client
         }
     }
 }
+
