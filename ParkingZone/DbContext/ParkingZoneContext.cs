@@ -15,6 +15,8 @@ namespace ParkingZone.Data
         public DbSet<Reservation> Reservations => Set<Reservation>();
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<Parking> Parking => Set<Parking>();
+        public DbSet<PlateScan> PlateScans => Set<PlateScan>();
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

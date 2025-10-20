@@ -1,0 +1,38 @@
+﻿@page
+@model ScanModel
+@{
+    ViewData["Title"] = "Escanear placa";
+}
+
+<h2>Escanear placa</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <video id="video" autoplay playsinline muted style="width:100%; background:#111; border-radius:8px;"></video>
+        <div class="mt-2 d-flex gap-2">
+            <button id="btnStart" class="btn btn-primary">Iniciar cámara</button>
+            <button id="btnCapture" class="btn btn-secondary">Capturar</button>
+            <button id="btnOCR" class="btn btn-success">Analizar placa</button>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <canvas id="canvas" style="width:100%; border:1px dashed #888; border-radius:8px;"></canvas>
+
+        <div class="mt-2">
+            <span id="status" class="text-muted"></span>
+        </div>
+
+        <div class="mt-3">
+            <label>Resultado:</label>
+            <pre id="result" style="white-space:pre-wrap"></pre>
+        </div>
+
+        <button id="btnSave" class="btn btn-warning mt-3" disabled>Guardar escaneo</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.3/dist/tesseract.min.js"></script>
+    <script src="/js/camera.js"></script>
+}
