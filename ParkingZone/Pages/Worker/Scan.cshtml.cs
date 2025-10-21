@@ -4,3 +4,4 @@ public class ScanModel : PageModel
 {
     public void OnGet() { }
 }
+    
